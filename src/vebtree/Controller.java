@@ -9,6 +9,7 @@ import javax.swing.JRadioButton;
 import javax.swing.JScrollBar;
 import javax.swing.SwingUtilities;
 
+import com.mxgraph.model.mxGraphModel;
 import com.mxgraph.swing.mxGraphComponent;
 import com.mxgraph.util.mxConstants;
 import com.mxgraph.view.mxGraph;
@@ -230,7 +231,13 @@ public class Controller {
 		this.fillLabel(this.vEBTree);
 		String edgeStyle = Constants.EDGE_STYLE;
 		Object parent = graph.getDefaultParent();
-		graph.getModel().beginUpdate();
+	
+	
+		Object[] allCells = mxGraphModel.getChildCells(graph.getModel(), graph.getDefaultParent(), true, true);
+		this.graph.getModel().beginUpdate();
+		this.graph.removeCells(allCells);
+		
+		
 		this.containerList = new ArrayList<>();
 		try {		
 			VEBContainer v1 = createContainer(graph, 800, 20, this.vEBTree, false);
@@ -241,7 +248,7 @@ public class Controller {
 				int xPosSum = xPos - 200;
 				VEBContainer vebcont = this.createContainer(graph, xPos, yPos, this.vEBTree.getCluster()[i], false);
 				this.containerList.add(vebcont);
-				graph.insertEdge(parent, null, null, v1.getClusterPointer().get(i), vebcont.getMainCont(), edgeStyle);
+				this.graph.insertEdge(parent, null, null, v1.getClusterPointer().get(i), vebcont.getMainCont(), edgeStyle);
 				VEBContainer sumneu = this.createContainer(graph, xPosSum, 350, this.vEBTree.getCluster()[i].getSummary(), true);
 				this.containerList.add(sumneu);
 				graph.insertEdge(parent, null, null, vebcont.getSumPointer(), sumneu.getMainCont(), edgeStyle); 
@@ -702,6 +709,7 @@ public class Controller {
 		this.showInfos(veb,x);
 		this.animateContainer(veb);
 		this.drawGraph();
+		
 		if(veb instanceof ProtoVEBTree) { // Proto
 			ProtoVEBTree p = (ProtoVEBTree) veb;
 			if(p.getU() == 2) {
